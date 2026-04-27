@@ -329,12 +329,57 @@ const bulkButtonText = computed(() => {
 })
 
 const totalAmount = computed(() => displayGroups.value.reduce((sum, group) => sum + group.total, 0).toFixed(2))
+const displaySellerCount = computed(() => {
+  const sellers = new Set<string>()
+  displayGroups.value.forEach((group) => {
+    sellers.add(group.sourceOrgName || group.orgName || '未知开票方')
+  })
+  return sellers.size
+})
+const displayOrderCount = computed(() => displayGroups.value.reduce((sum, group) => sum + group.orders.length, 0))
+
+function formatFilterAmount(value: number): string {
+  return `￥${value.toFixed(2)}`
+}
+
+const filterSummaryText = computed(() => {
+  const parts: string[] = []
+  const amountMin = parseFilterNumber(filters.amountMin)
+  const amountMax = parseFilterNumber(filters.amountMax)
+  const comboAmountMin = parseFilterNumber(filters.comboAmountMin)
+  const comboAmountMax = parseFilterNumber(filters.comboAmountMax)
+
+  if (amountMin !== null) {
+    parts.push(`金额大于等于 ${formatFilterAmount(amountMin)}`)
+  }
+  if (amountMax !== null) {
+    parts.push(`金额小于等于 ${formatFilterAmount(amountMax)}`)
+  }
+  if (mode.value === 'smart' && comboAmountMin !== null) {
+    parts.push(`组合金额大于等于 ${formatFilterAmount(comboAmountMin)}`)
+  }
+  if (mode.value === 'smart' && comboAmountMax !== null) {
+    parts.push(`组合金额小于等于 ${formatFilterAmount(comboAmountMax)}`)
+  }
+  if (filters.dateStart) {
+    parts.push(`开票日期不早于 ${filters.dateStart}`)
+  }
+  if (filters.dateEnd) {
+    parts.push(`开票日期不晚于 ${filters.dateEnd}`)
+  }
+  if (filters.ivcTitles.length > 0) {
+    parts.push(`发票抬头是 ${filters.ivcTitles.join('、')}`)
+  }
+
+  return parts.length > 0 ? parts.join('，') : '不限'
+})
 
 const summaryText = computed(() => {
-  if (mode.value === 'smart') {
-    return `共 ${displayGroups.value.length} 个推荐组合，可换开金额合计 ￥${totalAmount.value}`
-  }
-  return `共 ${displayGroups.value.length} 个开票方，可换开金额合计 ￥${totalAmount.value}`
+  const modeSummary = mode.value === 'smart'
+    ? `一共 ${displayGroups.value.length} 个推荐组合`
+    : `一共 ${displaySellerCount.value} 个开票方`
+
+  return `当前筛选：${filterSummaryText.value}；${modeSummary}，${displayOrderCount.value} 张发票，可换开金额合计 ￥${totalAmount.value}`
 })
 
 const emptyMessage = computed(() => {
