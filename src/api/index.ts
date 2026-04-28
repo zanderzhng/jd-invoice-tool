@@ -1,5 +1,6 @@
 import { invoke } from '@tauri-apps/api/core'
 import { listen, type UnlistenFn } from '@tauri-apps/api/event'
+import { getName, getVersion } from '@tauri-apps/api/app'
 import type {
   BatchOrderSeed,
   InvoiceItem,
@@ -123,4 +124,24 @@ export async function getTitles(): Promise<InvoiceTitle[]> {
 
 export async function saveTitles(titlesJson: string): Promise<string> {
   return invoke<string>('save_titles', { titlesJson })
+}
+
+export async function getAppVersion(): Promise<string> {
+  return getVersion()
+}
+
+export async function getAppName(): Promise<string> {
+  return getName()
+}
+
+export async function getUserAgent(): Promise<string> {
+  return invoke<string>('get_user_agent')
+}
+
+export async function saveUserAgent(userAgent: string): Promise<string> {
+  return invoke<string>('save_user_agent', { userAgent })
+}
+
+export async function resetUserAgent(): Promise<string> {
+  return invoke<string>('reset_user_agent')
 }

@@ -34,6 +34,9 @@ async fn main() {
             commands::download::download_invoice,
             commands::title::get_titles,
             commands::title::save_titles,
+            commands::user_agent::get_user_agent,
+            commands::user_agent::save_user_agent,
+            commands::user_agent::reset_user_agent,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

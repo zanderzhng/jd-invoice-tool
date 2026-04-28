@@ -1,10 +1,11 @@
+use crate::utils::file::read_user_agent_or_default;
 use reqwest::Client;
 
-const BASE_USER_AGENT: &str = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Mobile/15E148 Safari/604.1";
-
 pub fn build_client(cookie: &str) -> Result<Client, String> {
+    let user_agent = read_user_agent_or_default()?;
+
     Client::builder()
-        .user_agent(BASE_USER_AGENT)
+        .user_agent(user_agent)
         .default_headers({
             let mut headers = reqwest::header::HeaderMap::new();
             headers.insert(

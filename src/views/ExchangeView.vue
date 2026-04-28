@@ -109,10 +109,6 @@
 
     <div v-else-if="displayGroups.length === 0 && store.hasFetchedMergeGroups && !store.loading" class="empty">
       <p>{{ emptyMessage }}</p>
-      <div class="empty-actions">
-        <button class="btn btn-primary" @click="loadGroups">重新获取</button>
-        <button v-if="store.mergeGroups.length > 0" class="btn btn-secondary" @click="resetFilters">重置筛选</button>
-      </div>
     </div>
 
     <div v-else class="groups">

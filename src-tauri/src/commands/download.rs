@@ -1,11 +1,12 @@
 use tauri::command;
 use std::fs;
 use std::path::PathBuf;
-use crate::utils::file::read_cookie_file;
+use crate::utils::file::{read_cookie_file, read_user_agent_or_default};
 
 #[command]
 pub async fn download_invoice(url: String, filename: String) -> Result<String, String> {
     let cookie = read_cookie_file()?.ok_or("Cookie not found, please login first")?;
+    let user_agent = read_user_agent_or_default()?;
 
     let client = reqwest::Client::builder()
         .cookie_store(true)
@@ -15,7 +16,7 @@ pub async fn download_invoice(url: String, filename: String) -> Result<String, S
     let res = client
         .get(&url)
         .header("Cookie", &cookie)
-        .header("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15")
+        .header("User-Agent", user_agent)
         .send()
         .await
         .map_err(|e| format!("Download failed: {}", e))?;

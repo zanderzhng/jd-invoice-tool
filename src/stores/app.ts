@@ -1,6 +1,18 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { getCookie, saveCookie, deleteCookie, fetchInvoices, fetchBatchOrders, checkMerge, getTitles, saveTitles } from '@/api'
+import {
+  getCookie,
+  saveCookie,
+  deleteCookie,
+  fetchInvoices,
+  fetchBatchOrders,
+  checkMerge,
+  getTitles,
+  saveTitles,
+  getUserAgent,
+  saveUserAgent,
+  resetUserAgent,
+} from '@/api'
 import type { BatchOrderSeed, InvoiceItem, MergeGroup, MergeOrder } from '@/types'
 import { getMergeOrderAmount, isMergeOrderAmountResolved } from '@/utils/mergeOrder'
 import type { InvoiceTitle } from '@/types/title'
@@ -21,6 +33,7 @@ export const useAppStore = defineStore('app', () => {
   const invoiceHasMore = ref(true)
   const invoiceSeen = ref<Set<string>>(new Set())
   const titles = ref<InvoiceTitle[]>([])
+  const userAgent = ref('')
 
   type AppliedAmountResult = {
     groups: MergeGroup[]
@@ -193,6 +206,23 @@ export const useAppStore = defineStore('app', () => {
   async function saveTitlesData(newTitles: InvoiceTitle[]) {
     titles.value = newTitles
     await saveTitles(JSON.stringify(newTitles))
+  }
+
+  async function loadUserAgent() {
+    try {
+      userAgent.value = await getUserAgent()
+    } catch (e) {
+      console.error('Failed to load user agent:', e)
+      userAgent.value = ''
+    }
+  }
+
+  async function saveUserAgentData(nextUserAgent: string) {
+    userAgent.value = await saveUserAgent(nextUserAgent)
+  }
+
+  async function resetUserAgentData() {
+    userAgent.value = await resetUserAgent()
   }
 
   async function clearCookie() {
@@ -377,5 +407,9 @@ export const useAppStore = defineStore('app', () => {
     titles,
     loadTitles,
     saveTitlesData,
+    userAgent,
+    loadUserAgent,
+    saveUserAgentData,
+    resetUserAgentData,
   }
 })
