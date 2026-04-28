@@ -3,6 +3,7 @@ pub mod login_window;
 pub mod cookie;
 pub mod invoice;
 pub mod exchange;
+pub mod apply_record;
 pub mod download;
 pub mod title;
 pub mod user_agent;

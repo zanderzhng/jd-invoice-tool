@@ -31,6 +31,8 @@ async fn main() {
             commands::exchange::fetch_batch_order_amounts,
             commands::exchange::check_merge,
             commands::exchange::submit_merge_exchange,
+            commands::apply_record::fetch_apply_records,
+            commands::apply_record::fetch_apply_record_detail,
             commands::download::download_invoice,
             commands::title::get_titles,
             commands::title::save_titles,

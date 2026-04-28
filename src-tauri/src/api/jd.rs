@@ -18,6 +18,10 @@ pub struct InvoiceFile {
     pub invoice_date: String,
     #[serde(rename = "fileUrl", default)]
     pub file_url: String,
+    #[serde(rename = "pdfUrl", default)]
+    pub pdf_url: String,
+    #[serde(rename = "imgUrl", default)]
+    pub img_url: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -221,6 +225,63 @@ impl JdApi {
             .collect::<Vec<_>>();
 
         Ok(files)
+    }
+
+    pub async fn get_apply_list(&self, page: u32) -> Result<Vec<serde_json::Value>, String> {
+        let client = build_client(&self.cookie)?;
+        let url = format!(
+            "https://api.m.jd.com/api?functionId=appFpzz_getApplyNextOrderPage&appid=invoice-m&xAPIClientLanguage=zh_CN&xAPICurrency=CNY&xAPIRegion=CN&xAPITz=Asia%2FShanghai&xAPIElder=0&page={}",
+            page
+        );
+
+        let res = client
+            .get(&url)
+            .send()
+            .await
+            .map_err(|e| format!("Request failed: {}", e))?;
+
+        let json: serde_json::Value = res
+            .json()
+            .await
+            .map_err(|e| format!("Parse JSON failed: {}", e))?;
+
+        let data = parse_data_field(&json).unwrap_or_default();
+        let orders = extract_orders(&data);
+        eprintln!("[DEBUG] get_apply_list page={} orders count={}", page, orders.len());
+
+        Ok(orders)
+    }
+
+    pub async fn get_invoice_center_detail(
+        &self,
+        order_id: &str,
+        tag_str: &str,
+    ) -> Result<serde_json::Value, String> {
+        let client = build_client(&self.cookie)?;
+        let encoded_tag = utf8_percent_encode(tag_str, NON_ALPHANUMERIC).to_string();
+        let url = format!(
+            "https://api.m.jd.com/api?functionId=appFpzz_appIvcCenterDetail&appid=invoice-m&xAPIClientLanguage=zh_CN&xAPICurrency=CNY&xAPIRegion=CN&xAPITz=Asia%2FShanghai&xAPIElder=0&orderId={}&tagStr={}",
+            order_id, encoded_tag
+        );
+
+        let res = client
+            .get(&url)
+            .send()
+            .await
+            .map_err(|e| format!("Request failed: {}", e))?;
+
+        let json: serde_json::Value = res
+            .json()
+            .await
+            .map_err(|e| format!("Parse JSON failed: {}", e))?;
+
+        if !is_success_code(&json) {
+            return Err(extract_message(&json));
+        }
+
+        let data = parse_data_field(&json).unwrap_or(serde_json::Value::Null);
+        eprintln!("[DEBUG] get_invoice_center_detail orderId={} success={}", order_id, !data.is_null());
+        Ok(data)
     }
 
     pub async fn get_batch_list(&self, page: u32) -> Result<Vec<serde_json::Value>, String> {

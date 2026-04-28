@@ -3,6 +3,8 @@ import { listen, type UnlistenFn } from '@tauri-apps/api/event'
 import { getName, getVersion } from '@tauri-apps/api/app'
 import type {
   BatchOrderSeed,
+  ApplyRecord,
+  ApplyRecordDetail,
   InvoiceItem,
   InvoiceFile,
   MergeExchangeResult,
@@ -94,6 +96,14 @@ export async function fetchInvoiceDetail(orderId: string): Promise<InvoiceFile[]
 
 export async function fetchBatchOrders(): Promise<BatchOrderSeed[]> {
   return invoke<BatchOrderSeed[]>('fetch_batch_orders')
+}
+
+export async function fetchApplyRecords(page: number): Promise<ApplyRecord[]> {
+  return invoke<ApplyRecord[]>('fetch_apply_records', { page })
+}
+
+export async function fetchApplyRecordDetail(orderId: string, tagStr: string): Promise<ApplyRecordDetail> {
+  return invoke<ApplyRecordDetail>('fetch_apply_record_detail', { orderId, tagStr })
 }
 
 export async function checkMerge(orderListJson: string): Promise<MergeGroup[]> {

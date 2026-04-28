@@ -19,6 +19,11 @@ const router = createRouter({
       component: () => import('@/views/ExchangeView.vue'),
     },
     {
+      path: '/apply-records',
+      name: 'apply-records',
+      component: () => import('@/views/ApplyRecordsView.vue'),
+    },
+    {
       path: '/settings',
       name: 'settings',
       component: () => import('@/views/SettingsView.vue'),

@@ -17,6 +17,44 @@ export interface InvoiceFile {
   amount: string
   invoiceDate: string
   fileUrl: string
+  pdfUrl?: string
+  imgUrl?: string
+}
+
+export interface ApplyRecordProduct {
+  name?: string
+  skuName?: string
+  imgUrl?: string
+}
+
+export interface ApplyRecord {
+  orderId: string
+  status: string
+  reqState: number
+  reqType: number
+  applyTime: string
+  invoiceTitle: string
+  invoiceType: string
+  invoiceContentName: string
+  titleType: string
+  amount: string
+  venderName: string
+  tagStr: string
+  products: ApplyRecordProduct[]
+}
+
+export interface ApplyRecordDetail {
+  orderId: string
+  status: string
+  invoiceTitle: string
+  invoiceType: string
+  invoiceContentName: string
+  titleType: string
+  invoiceAmount: string
+  invoiceTime: string
+  applyTime: string
+  venderName: string
+  files: InvoiceFile[]
 }
 
 export interface MergeOrder {

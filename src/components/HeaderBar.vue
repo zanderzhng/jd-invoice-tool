@@ -6,6 +6,7 @@
     <nav class="header-nav">
       <router-link v-if="store.isLoggedIn" to="/" class="nav-link">发票列表</router-link>
       <router-link v-if="store.isLoggedIn" to="/exchange" class="nav-link">换开发票</router-link>
+      <router-link v-if="store.isLoggedIn" to="/apply-records" class="nav-link">申请记录</router-link>
       <router-link to="/settings" class="nav-link">设置</router-link>
       <button v-if="store.isLoggedIn" class="login-btn logout" @click="handleLogout">退出登录</button>
       <router-link v-else-if="$route.path !== '/login'" to="/login" class="login-btn">登录</router-link>
