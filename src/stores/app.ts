@@ -350,6 +350,7 @@ export const useAppStore = defineStore('app', () => {
 
     if (!cachedGroups) {
       mergeGroups.value = []
+      error.value = '暂无缓存，请点击重新获取'
       return false
     }
 

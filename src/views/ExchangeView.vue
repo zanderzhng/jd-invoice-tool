@@ -471,6 +471,11 @@ watch(mode, (nextMode) => {
 }, { immediate: true })
 
 async function loadGroups() {
+  if (!store.hasLoadedMergeGroupCache) {
+    store.loadCachedMergeGroups()
+    return
+  }
+
   await store.loadMergeGroups()
 }
 
